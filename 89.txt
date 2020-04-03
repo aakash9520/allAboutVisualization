@@ -1,0 +1,8 @@
+resource hogging
+each app thinks that all 
+
+kernel --> multiple app -> same reosurce
+
+network interface
+file system
+
