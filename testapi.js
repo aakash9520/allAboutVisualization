@@ -53,7 +53,10 @@ connection.connect(function(err) {
 }
 
 
-
+module.exports = {
+  EndPointSel,
+  connecttodb
+};
 
 
 
@@ -70,24 +73,23 @@ connection.connect(function(err) {
 
 // execution point
 
-function main()
-{
+// function main()
+// {
 
-  let response =  EndPointSel();
+//   let response =  EndPointSel();
 
-  console.log(response);
-
-
-  let liveCO = connecttodb();
-
-  console.log(liveCO);
-
-  // how / should do i capture resp / connection object here?
-  //this is the best example to learn the async nature of JS 
-  // welcome to JS :) 
-  //liveCO.end();
+//   console.log(response);
 
 
+//   let liveCO = connecttodb();
 
-}
-main();
+//   console.log(liveCO);
+
+//   // how / should do i capture resp / connection object here?
+//   //this is the best example to learn the async nature of JS 
+//   // welcome to JS :) 
+//   //liveCO.end();
+
+
+// }
+// main();
