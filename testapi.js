@@ -1,15 +1,15 @@
 var unirest = require("unirest");
-var mysql   = require('mysql');
+var mysql = require('mysql');
 
 //endpoint values are countries, statistics , countries : as per rapidapi
- function EndPointSel(endpoint="statistics",queryvalue="india")
-{
+function EndPointSel(endpoint = "statistics", queryvalue = "india") {
   const restep = "https://covid-193.p.rapidapi.com/" + endpoint;
   var req = unirest("GET", restep);
 
   var storedresp;
 
-  req.query({ "country" : queryvalue
+  req.query({
+    "country": queryvalue
     //querykey , queryvalue
     //"country": "india"
   });
@@ -18,34 +18,49 @@ var mysql   = require('mysql');
     "x-rapidapi-key": "36191329b7mshcbbefaca44e0129p11f24djsn5d13d22f2b25"
   });
 
-  req.end( function (res) {
+  req.end(function (res) {
     if (res.error) throw new Error(res.error);
 
-    //storedresp =  res.json();
+    console.log("after resolving!!!  ready to return")
+    //storedresp = res
+    connecttodb(res);
     //storedresp = JSON.stringify(storedresp)
     //storedresp = JSON.parse(storedresp)
-    console.log(res.body.response)
+    //console.log(res.body.response)
     //return storedresp;
     //return res.body.response;
   });
 
-  return storedresp
+  //console.log(storedresp)
+  //return storedresp
 }
- 
-function connecttodb()
-{
-var connection = mysql.createConnection({
-  host     : '35.223.207.83',
-  user     : 'root',
-  password : 'npmgak@2020#'
-});
 
-connection.connect(function(err) {
+function main() {
+
+  var dojo = EndPointSel();
+  //console.log(dojo);
+
+  //setTimeout(() => { "lets wait for dojo" }, 3000)
+
+  //console.log(dojo);
+
+}
+main();
+
+function connecttodb(res) {
+  var connection = mysql.createConnection({
+    host: '35.223.207.83',
+    user: 'root',
+    password: 'npmgak@2020#'
+  });
+
+  connection.connect(function (err) {
     if (err) {
       console.error('error connecting: ' + err.stack);
       return;
     }
     console.log("Connected to DB!")
+    console.log(res.body.response)
     //return connection;
   });
 
@@ -61,14 +76,15 @@ module.exports = {
 
 
 
+
 /*liveCO.query("CREATE DATABASE coviddb", function (err, result) {
     if (err) throw err;
     console.log("Database created");
   });*/
 
 
-  
-    
+
+
 //console.log('connected as id ' + connection.threadId);
 
 // execution point
