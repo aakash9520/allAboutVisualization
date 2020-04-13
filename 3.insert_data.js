@@ -1,14 +1,14 @@
 // this code is not completed yet
 var unirest = require("unirest");
 var mysql   = require('mysql');
-
+var resp = [];
 //endpoint values are countries, statistics , countries : as per rapidapi
  function EndPointSel(endpoint="statistics",queryvalue="india")
 {
   const restep = "https://covid-193.p.rapidapi.com/" + endpoint;
   var req = unirest("GET", restep);
 
-  var storedresp;
+  
 
   req.headers({
 	"x-rapidapi-host": "covid-193.p.rapidapi.com",
@@ -21,7 +21,7 @@ var mysql   = require('mysql');
     //storedresp =  res.json();
     //storedresp = JSON.stringify(storedresp)
     //storedresp = JSON.parse(storedresp)
-   
+    resp =  res.body.response;
     console.log(res.body.results)
     console.log("hi aa")
     storedresp = JSON.stringify(res.body.results)
@@ -83,10 +83,28 @@ connection.connect(function(err) {
     return connection;
   });
 
+  //CreateTable(connection);
+   InsertData(connection);
   connection.end();
 }
+function CreateTable(connection){
+  var sql = "CREATE TABLE table1_covid_19 (id INT AUTO_INCREMENT PRIMARY KEY, name_Country VARCHAR(255), cases_new VARCHAR(10), cases_active int(20), cases_recovered int(20), cases_total int(20), deaths_new VARCHAR(10), deaths_total int (20))";
+  connection.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log("Table created");
+  });
+}
+function InsertData(connection){
+  var sql = "INSERT INTO table1_covid_19 (id,name_Country,cases_new,cases_active,cases_recovered,cases_total,deaths_new,deaths_total) VALUES ?";
+  var values = [];
+  for(i =1 ; i<resp.length;i++){
+    values.push(i, resp[i].Country,resp[i].cases.new,resp[i].cases.active,resp[i].cases.recovered,resp[i].cases.total,resp[i].deaths.new,resp[i].deaths.toatl);  
+  }
+  connection.query(sql , [values], function(error){if (error) throw error;
+  console.log("Insert sucessful.");
+});
 
-
+}
 
 
 
