@@ -8,11 +8,11 @@ function EndPointSel(endpoint = "statistics", queryvalue = "india") {
 
   var storedresp;
 
-  req.query({
-    "country": queryvalue
-    //querykey , queryvalue
-    //"country": "india"
-  });
+  // req.query({
+  //   "country": queryvalue
+  //   //querykey , queryvalue
+  //   //"country": "india"
+  // });
   req.headers({
     "x-rapidapi-host": "covid-193.p.rapidapi.com",
     "x-rapidapi-key": "36191329b7mshcbbefaca44e0129p11f24djsn5d13d22f2b25"
@@ -51,7 +51,8 @@ function connecttodb(res) {
   var connection = mysql.createConnection({
     host: '35.223.207.83',
     user: 'root',
-    password: 'npmgak@2020#'
+    password: 'npmgak@2020#',
+    database: "coviddb"
   });
 
   connection.connect(function (err) {
@@ -63,10 +64,46 @@ function connecttodb(res) {
     console.log(res.body.response)
     //return connection;
   });
-
+  //CreateTable(connection);
+  InsertData(connection,res.body.response);
+  FetchData(connection);
   connection.end();
 }
+function CreateTable(connection){
+  var sql = "CREATE TABLE table1_covid_19 (id INT AUTO_INCREMENT PRIMARY KEY, name_Country VARCHAR(255), cases_new VARCHAR(10), cases_active int(20), cases_recovered int(20), cases_total int(20), deaths_new VARCHAR(10), deaths_total int (20))";
+  connection.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log("Table created");
+  });
+}
+function FetchData(connection){
+  var sql = "SELECT * from table1_covid_19";
+  connection.query(sql,function(error,result,fields){
+    console.log("select query result as follows! ");
+    console.log(fields);
+  })
+}
+function InsertData(connection,resp){
+  var sql = "INSERT INTO table1_covid_19 (id,name_Country,cases_new,cases_active,cases_recovered,cases_total,deaths_new,deaths_total) VALUES ?";
+  var values = [];
+  for(i =1 ; i<resp.length;i++){
+    var j = 0;
+    values[j] = [i, resp[i].country,resp[i].cases.new,resp[i].cases.active,resp[i].cases.recovered,resp[i].cases.total,resp[i].deaths.new,resp[i].deaths.toatl];
+    j++;
+  }
+  connection.query(sql , [values],  function (err, result) {
+    if (err) 
+    {
+      console.log("error occured " + err.stack);
+      //throw err;
+    }
+     
+    console.log("Number of records inserted: " + result.affectedRows);
+  });
+//   console.log("Insert sucessful.");
+// });
 
+}
 
 module.exports = {
   EndPointSel,
