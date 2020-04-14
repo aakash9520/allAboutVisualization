@@ -64,7 +64,7 @@ function connecttodb(res) {
     console.log(res.body.response)
     //return connection;
   });
-  //CreateTable(connection);
+  CreateTable(connection);
   InsertData(connection,res.body.response);
   FetchData(connection);
   connection.end();
@@ -86,10 +86,14 @@ function FetchData(connection){
 function InsertData(connection,resp){
   var sql = "INSERT INTO table1_covid_19 (id,name_Country,cases_new,cases_active,cases_recovered,cases_total,deaths_new,deaths_total) VALUES ?";
   var values = [];
+  var j = 0;
   for(i =1 ; i<resp.length;i++){
-    var j = 0;
-    values[j] = [i, resp[i].country,resp[i].cases.new,resp[i].cases.active,resp[i].cases.recovered,resp[i].cases.total,resp[i].deaths.new,resp[i].deaths.toatl];
-    j++;
+   
+    if(resp[i].country != "ALL")
+    {
+      values[j] = [i, resp[i].country,resp[i].cases.new,resp[i].cases.active,resp[i].cases.recovered,resp[i].cases.total,resp[i].deaths.new,resp[i].deaths.total];
+      j++;
+    }
   }
   connection.query(sql , [values],  function (err, result) {
     if (err) 
@@ -104,7 +108,9 @@ function InsertData(connection,resp){
 // });
 
 }
+/*function modifyData(connection){
 
+}*/
 module.exports = {
   EndPointSel,
   connecttodb
