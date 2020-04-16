@@ -64,9 +64,10 @@ function connecttodb(res) {
     console.log(res.body.response)
     //return connection;
   });
-  CreateTable(connection);
-  InsertData(connection,res.body.response);
-  FetchData(connection);
+  //CreateTable(connection);
+  //InsertData(connection,res.body.response);
+  updateData(connection,res.body.response);
+  FetchData(connection); 
   connection.end();
 }
 function CreateTable(connection){
@@ -108,9 +109,28 @@ function InsertData(connection,resp){
 // });
 
 }
-/*function modifyData(connection){
-
-}*/
+function updateData(connection,resp){
+  var sql = "REPLACE INTO table1_covid_19 (name_Country,cases_new,cases_active,cases_recovered,cases_total,deaths_new,deaths_total) VALUES ?";
+  var values = [];
+  var j = 0;
+  for(i =1 ; i<resp.length;i++){
+   
+    if(resp[i].country != "ALL")
+    {
+      values[j] = [resp[i].country,resp[i].cases.new,resp[i].cases.active,resp[i].cases.recovered,resp[i].cases.total,resp[i].deaths.new,resp[i].deaths.total];
+      j++;
+    }
+  }
+  connection.query(sql , [values],  function (err, result) {
+    if (err) 
+    {
+      console.log("error occured " + err.stack);
+      //throw err;
+    }
+     
+    console.log("Number of records updated: " + result.affectedRows);
+  });
+}
 module.exports = {
   EndPointSel,
   connecttodb
